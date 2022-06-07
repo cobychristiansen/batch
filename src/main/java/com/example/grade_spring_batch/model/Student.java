@@ -33,8 +33,4 @@ public class Student {
     @Column(name = "tests")
     @OneToMany(mappedBy = "studentAccount", cascade = CascadeType.ALL)
     private List<Test> tests;
-
-
-
-
 }
