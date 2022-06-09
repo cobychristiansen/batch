@@ -11,7 +11,6 @@ import java.util.List;
 
     @Component
     public class StudentWriter implements ItemWriter<Student> {
-
         @Autowired
         StudentRepository studentRepository;
         @Override

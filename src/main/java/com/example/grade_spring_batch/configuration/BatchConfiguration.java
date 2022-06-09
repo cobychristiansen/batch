@@ -10,15 +10,23 @@ import org.springframework.batch.core.configuration.annotation.JobBuilderFactory
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
+import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
+import org.springframework.batch.item.database.JdbcBatchItemWriter;
+import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
+import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.MultiResourceItemReader;
+import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 
 @EnableBatchProcessing
@@ -28,6 +36,10 @@ public class BatchConfiguration {
     StepBuilderFactory stepBuilderFactory;
     @Autowired
     JobBuilderFactory jobBuilderFactory;
+
+//    @Autowired
+//    DataSource dataSource;
+
     @Autowired
     StudentReader studentReader;
 
@@ -50,12 +62,12 @@ public class BatchConfiguration {
                 .writer(studentWriter)
                 .build();
     }
-    @Bean
+//    @Bean
     public ItemReader<Student> reader() {
         Resource[] resources = null;
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
-            resources = patternResolver.getResources("file:./data/*.csv");
+            resources = patternResolver.getResources("grades.csv");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -65,6 +77,29 @@ public class BatchConfiguration {
         reader.setDelegate(studentReader);
         return reader;
     }
+
+//    @Bean
+//    public FlatFileItemReader<Student> reader() {
+//        return new FlatFileItemReaderBuilder<Student>()
+//                .name("studentReader")
+//                .resource(new ClassPathResource("grades.csv"))
+//                .delimited()
+//                .names(new String[]{"lastName",
+//                        "firstName",
+//                        "ssn",
+//                        "test1",
+//                        "test2",
+//                        "test3",
+//                        "test4",
+//                        "grade"
+//                })
+//                .fieldSetMapper(new BeanWrapperFieldSetMapper<Student>() {{
+//                    setTargetType(Student.class);
+//                }})
+//                .build();
+//    }
+
+
 }
 //make an api, csv as input
 //populate sql table from input

@@ -18,9 +18,8 @@ import java.io.IOException;
 @Component
 public class StudentReader extends FlatFileItemReader<Student> implements ItemReader<Student> {
     public StudentReader() {
-        setResource(new FileSystemResource("lib/grades.csv"));
+        setResource(new FileSystemResource("grades.csv"));
         setLinesToSkip(1);
-
         setLineMapper(getDefaultLineMapper());
     }
     public DefaultLineMapper<Student> getDefaultLineMapper() {
@@ -28,20 +27,18 @@ public class StudentReader extends FlatFileItemReader<Student> implements ItemRe
         DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
 
         delimitedLineTokenizer.setNames(new String[] {
-                "Last name",
-                "First name",
-                "SSN",
-                "Test1",
-                "Test2",
-                "Test3",
-                "Test4",
-                "Grade"
+                "lastName",
+                "firstName",
+                "ssn",
+                "grade"
         });
 
         defaultLineMapper.setLineTokenizer(delimitedLineTokenizer);
 
         BeanWrapperFieldSetMapper<Student> beanWrapperFieldSetMapper = new BeanWrapperFieldSetMapper<Student>();
         beanWrapperFieldSetMapper.setTargetType(Student.class);
+
+        beanWrapperFieldSetMapper.setDistanceLimit(1);
 
         defaultLineMapper.setFieldSetMapper(beanWrapperFieldSetMapper);
 

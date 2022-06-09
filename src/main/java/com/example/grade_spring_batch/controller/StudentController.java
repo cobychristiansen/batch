@@ -49,7 +49,6 @@ public class StudentController {
         map.put("startTime", new JobParameter(System.currentTimeMillis()));
         JobParameters jobParameters = new JobParameters(map);
         try {
-//            System.out.println(applicationContext.containsBean("ETL"));
             jobLauncher.run((Job)applicationContext.getBean("ETL"), jobParameters);
         } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
                  JobParametersInvalidException e) {
