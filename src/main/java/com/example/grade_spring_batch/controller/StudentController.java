@@ -58,6 +58,22 @@ public class StudentController {
         }
     }
 
+    @GetMapping("/testBatch/{fileName}")
+    public void testBatchWithFile(@PathVariable("fileName") String fileName) {
+        Map<String, JobParameter> map = new HashMap<>();
+        map.put("startTime", new JobParameter(System.currentTimeMillis()));
+        map.put("fileName", new JobParameter(fileName));
+        JobParameters jobParameters = new JobParameters(map);
+        try {
+            jobLauncher.run((Job)applicationContext.getBean("ETL"), jobParameters);
+        } catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException |
+                 JobParametersInvalidException e) {
+            throw new RuntimeException(e);
+//            AppLog.build()
+//                    ...
+        }
+    }
+
     @DeleteMapping("deleteStudentById/{studentId}")
     public void deleteStudentById(@PathVariable("studentId") long studentId){
         studentService.deleteById(studentId);

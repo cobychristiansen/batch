@@ -8,25 +8,18 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.item.ItemReader;
-import org.springframework.batch.item.database.BeanPropertyItemSqlParameterSourceProvider;
-import org.springframework.batch.item.database.JdbcBatchItemWriter;
-import org.springframework.batch.item.database.builder.JdbcBatchItemWriterBuilder;
-import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.MultiResourceItemReader;
-import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
-import javax.sql.DataSource;
 import java.io.IOException;
 
 @EnableBatchProcessing
@@ -56,18 +49,22 @@ public class BatchConfiguration {
     }
     @Bean
     public Step step() {
+        String fileName = "";
         return stepBuilderFactory.get("myStep")
                 .<Student, Student>chunk(1)
-                .reader(reader())
+                .reader(reader(fileName))
                 .writer(studentWriter)
                 .build();
     }
 //    @Bean
-    public ItemReader<Student> reader() {
+    @Bean
+    @StepScope
+    public ItemReader<Student> reader(@Value("#{jobParameters['fileName']}") String fileName) {
         Resource[] resources = null;
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
-            resources = patternResolver.getResources("grades.csv");
+            String dynamicFileName = (fileName.equals("")) ? "grades.csv" : fileName;
+            resources = patternResolver.getResources(dynamicFileName);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,3 +100,10 @@ public class BatchConfiguration {
 }
 //make an api, csv as input
 //populate sql table from input
+
+//start implementation of microservices
+//make microservices of this batch
+//make a microservice of previous task (DTO, Address & User)
+//make csv file of User and Addresses and we wil communicate between two microservices and upload as ETL
+
+//Spring Cloud or Eureka (spring cloud more recent)
